@@ -1,0 +1,89 @@
+
+@startuml
+title Assignment 4 - Facade Pattern
+skinparam classAttributeIconSize 0
+top to bottom direction
+
+class Main {
+    - {static} passed : int
+    - {static} total : int
+    + {static} main(args : String[]) : void
+    - {static} check(testId : String, description : String, condition : boolean, details : String) : void
+}
+
+class OrderFacade <<Facade>> {
+    - inventory : InventoryService
+    - payment : PaymentProcessor
+    - shipping : ShippingService
+    - notification : NotificationService
+    - orders : Map<Integer, Order>
+    + OrderFacade()
+    + placeOrder(order : Order) : boolean
+    + cancelOrder(orderId : int) : boolean
+    + getAvailableStock(product : String) : int
+    + getOrderStatus(orderId : int) : OrderStatus
+    - failOrder(order : Order) : void
+}
+
+class Order {
+    - id : int
+    - product : String
+    - quantity : int
+    - price : double
+    - customerEmail : String
+    - status : OrderStatus
+    + Order(id : int, product : String, quantity : int, price : double, customerEmail : String)
+    + getId() : int
+    + getProduct() : String
+    + getQuantity() : int
+    + getTotalPrice() : double
+    + getCustomerEmail() : String
+    + getStatus() : OrderStatus
+    + setStatus(status : OrderStatus) : void
+}
+
+enum OrderStatus {
+    CREATED
+    COMPLETED
+    FAILED
+    CANCELLED
+}
+
+class InventoryService {
+    - stock : Map<String, Integer>
+    + InventoryService()
+    + reserve(product : String, quantity : int) : boolean
+    + release(product : String, quantity : int) : void
+    + getStock(product : String) : int
+}
+
+class PaymentProcessor {
+    - paidOrders : Set<Integer>
+    + processPayment(orderId : int, amount : double) : boolean
+    + refund(orderId : int) : void
+}
+
+class ShippingService {
+    - shipments : Set<Integer>
+    + arrangeShipping(orderId : int, product : String) : boolean
+    + cancelShipping(orderId : int) : void
+}
+
+class NotificationService {
+    + sendConfirmation(email : String, orderId : int) : void
+    + sendCancellation(email : String, orderId : int) : void
+    + sendFailure(email : String, orderId : int) : void
+}
+
+Main ..> OrderFacade : uses
+Main ..> Order : creates
+
+OrderFacade *-- InventoryService
+OrderFacade *-- PaymentProcessor
+OrderFacade *-- ShippingService
+OrderFacade *-- NotificationService
+
+OrderFacade o-- Order : manages
+Order --> OrderStatus : status
+
+@enduml
