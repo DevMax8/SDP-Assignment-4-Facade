@@ -4,7 +4,7 @@ title Assignment 4 - Facade Pattern
 skinparam classAttributeIconSize 0
 top to bottom direction
 
-class Main {
+class Mainbek {
     - {static} passed : int
     - {static} total : int
     + {static} main(args : String[]) : void
@@ -75,8 +75,8 @@ class NotificationService {
     + sendFailure(email : String, orderId : int) : void
 }
 
-Main ..> OrderFacade : uses
-Main ..> Order : creates
+Mainbek ..> OrderFacade : uses
+Mainbek ..> Order : creates
 
 OrderFacade *-- InventoryService
 OrderFacade *-- PaymentProcessor
